@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>情感分析器 Sentiment Analyzer</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 640px; margin: 60px auto; padding: 0 20px; }
+        textarea { width: 100%; height: 100px; font-size: 16px; padding: 10px; box-sizing: border-box; }
+        button { margin-top: 10px; padding: 10px 30px; font-size: 16px; background: #0078d4; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        #result { margin-top: 20px; padding: 15px; border-radius: 6px; display: none; }
+        .positive { background: #e6f4ea; border-left: 4px solid #34a853; }
+        .negative { background: #fce8e6; border-left: 4px solid #ea4335; }
+        .neutral  { background: #f0f0f0; border-left: 4px solid #999; }
+        .label { color: #555; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <h2>🧠 情感分析器 <span style="font-size:16px;color:#888;">Sentiment Analyzer</span></h2>
+    <textarea id="inputText" placeholder="输入中文或英文 / Enter Chinese or English..."></textarea>
+    <br>
+    <button onclick="analyze()">分析 Analyze</button>
+    <div id="result">
+        <p>
+            <strong>翻译 Translation：</strong><br>
+            <span id="translated"></span>
+            <span class="label" id="direction"></span>
+        </p>
+        <p><strong>情感 Sentiment：</strong> <span id="sentiment"></span></p>
+        <p>
+            正面 Positive：<span id="pos"></span> &nbsp;|&nbsp;
+            负面 Negative：<span id="neg"></span>
+        </p>
+    </div>
+
+    <script>
+        async function analyze() {
+            const text = document.getElementById("inputText").value;
+            if (!text.trim()) return;
+            const res = await fetch("/analyze", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({text: text})
+            });
+            const data = await res.json();
+            document.getElementById("translated").textContent = data.translated;
+            document.getElementById("direction").textContent =
+                data.detected_lang === "en" ? "  (EN → 中文)" : "  (中文 → EN)";
+            document.getElementById("sentiment").textContent = data.sentiment;
+            document.getElementById("pos").textContent = data.positive;
+            document.getElementById("neg").textContent = data.negative;
+            const box = document.getElementById("result");
+            box.className = data.sentiment;
+            box.style.display = "block";
+        }
+    </script>
+</body>
+</html>
