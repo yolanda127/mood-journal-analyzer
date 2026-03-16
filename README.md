@@ -39,3 +39,7 @@ Built with Azure Translator and Azure AI Language, deployed on Azure Web App.
    - `LANGUAGE_KEY` = your Azure AI Language key
 4. Run: `python app.py`
 5. Open `http://localhost:5000`
+
+## Demo
+![App Screenshot](screenshot.png)
+
